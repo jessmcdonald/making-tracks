@@ -34,8 +34,6 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData }) => {
       featureProjection: 'EPSG:3857',
     });
 
-    console.log('Parsed GPX features:', features);
-
     // Manually parse the GPX file to extract timestamps
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(gpxData, 'application/xml');
@@ -144,7 +142,7 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData }) => {
     return () => map.current?.setTarget(undefined);
   }, [gpxData]);
 
-  return <div ref={mapRef} style={{ width: '100%', height: '500px' }} />;
+  return <div ref={mapRef} style={{ width: '45%', height: '500px' }} />;
 };
 
 export default ActivityMap;

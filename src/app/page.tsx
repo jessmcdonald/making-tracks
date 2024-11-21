@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import ActivityMap from './activity-map';
+import Playlist from './playlist';
+import { samplePlaylistData } from './samplePlaylisData';
 
 export default function Home() {
   const [gpxData, setGpxData] = useState<string | null>(null);
+  const playlistData = samplePlaylistData;
 
   useEffect(() => {
     fetch('/run.gpx')
@@ -25,11 +28,15 @@ export default function Home() {
   }, [gpxData]);
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <h1 className="text-4xl sm:text-5xl font-bold text-center sm:text-left">
-          MAKING TRACKS
-        </h1>
+    <div className="font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-row flex-wrap gap-8 row-start-2 items-center sm:items-start">
+        <div className="w-full">
+          <h1 className="text-4xl sm:text-5xl font-bold text-center sm:text-left">
+            MAKING TRACKS
+          </h1>
+        </div>
+
+        <Playlist playlistData={playlistData} />
         {gpxData ? (
           <ActivityMap gpxData={gpxData} />
         ) : (
