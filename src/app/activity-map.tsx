@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import { GPX } from 'ol/format';
@@ -20,6 +20,10 @@ interface MapProps {
 const ActivityMap: React.FC<MapProps> = ({ gpxData }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const map = useRef<Map | null>(null);
+
+  const [mapColorSetting, setMapColorSetting] = useState<'heart-rate' | 'pace'>(
+    'heart-rate'
+  );
 
   useEffect(() => {
     if (!mapRef.current || !gpxData) return;
@@ -166,7 +170,30 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData }) => {
     return () => map.current?.setTarget(undefined);
   }, [gpxData]);
 
-  return <div ref={mapRef} className="w-[400px] h-[400px]" />;
+  return (
+    <div className="w-full h-full">
+      <div className="flex flex-row gap-2 py-2">
+        <button
+          className={`bg-[#222222] w-[50%] px-2 py-1 rounded-md ${
+            mapColorSetting === 'heart-rate' ? 'border-2 border-white' : ''
+          }`}
+          onClick={() => setMapColorSetting('heart-rate')}
+        >
+          heart rate
+        </button>
+        <button
+          className={`bg-[#222222] w-[50%] px-2 py-1 rounded-md ${
+            mapColorSetting === 'pace' ? 'border-2 border-white' : ''
+          }`}
+          onClick={() => setMapColorSetting('pace')}
+        >
+          pace
+        </button>
+      </div>
+
+      <div ref={mapRef} className="w-[400px] h-[400px]" />
+    </div>
+  );
 };
 
 export default ActivityMap;
