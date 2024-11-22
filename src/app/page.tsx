@@ -78,22 +78,21 @@ export default function Home() {
   }, [gpxData]);
 
   return (
-    <div className="font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-row flex-wrap gap-8 row-start-2 items-center sm:items-start">
+    <div className="font-[family-name:var(--font-geist-sans)] h-screen overflow-hidden">
+      <main className="flex flex-col h-full gap-8 p-6">
         <div className="w-full">
           <h1 className="text-4xl sm:text-5xl font-bold text-center sm:text-left">
             MAKING TRACKS
           </h1>
         </div>
-        <div className="flex flex-row">
+        <div className="flex flex-row flex-1 overflow-hidden">
           <Playlist playlistData={playlistData} />
           {gpxData ? (
-            <div className="flex flex-column flex-1 w-full h-full">
-              <div>
+            <div className="flex flex-column flex-wrap flex-1 w-full h-full">
+              <div className="w-full">
                 <p>Activity start time: {activityStartTime?.toISOString()}</p>
                 <p>Activity type: {activityType}</p>
               </div>
-
               <ActivityMap gpxData={gpxData} />
             </div>
           ) : (
