@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
 type SpotifyImage = {
   url: string;
@@ -64,7 +64,7 @@ const Playlist: React.FC<PlaylistProps> = ({ playlistData }) => {
     <div className="flex flex-col gap-5 h-full w-[45%]">
       <img className="rounded-md h-64 w-64" src={playlistData.images[1].url} />
       <p className="text-xl font-bold">
-        {playlistData.name} // {playlistData.owner.display_name}
+        {`${playlistData.name} // ${playlistData.owner.display_name}`}
       </p>
       <div className="overflow-auto scrollbar-thin scrollbar-thumb-[#222222] scrollbar-track-[#636363] flex flex-col gap-2 flex-grow pr-2">
         {playlistData.tracks.items.map((item) => (

@@ -70,8 +70,10 @@ export default function Home() {
       .then((data) => {
         if (data !== gpxData) {
           setGpxData(data);
-          data && setActivityStartTime(getStartTimeFromGpx(data));
-          data && setActivityType(getActivityTypeFromGpx(data));
+          if (data) {
+            setActivityStartTime(getStartTimeFromGpx(data));
+            setActivityType(getActivityTypeFromGpx(data));
+          }
         }
       })
       .catch((error) => console.error('Error fetching GPX data:', error));
@@ -82,7 +84,7 @@ export default function Home() {
       <main className="flex flex-col h-full gap-8 p-6">
         <div className="w-full">
           <h1 className="text-4xl sm:text-5xl font-bold text-center sm:text-left">
-            // MAKING TRACKS
+            {'// MAKING TRACKS'}
           </h1>
         </div>
         <div className="flex flex-row flex-1 overflow-hidden">
