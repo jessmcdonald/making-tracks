@@ -25,11 +25,11 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData }) => {
     if (!mapRef.current || !gpxData) return;
 
     const colorPalette = [
-      '#FB8CAB',
-      '#E65C9C',
-      '#AF1281',
-      '#6B0772',
-      '#360167',
+      '#53C296',
+      '#99D973',
+      '#F1BA05',
+      '#DD6000',
+      '#CA1F34',
     ];
 
     const trackSource = new VectorSource();
