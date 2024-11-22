@@ -6,7 +6,7 @@ import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
 import { Vector as VectorSource } from 'ol/source';
 import { fromLonLat } from 'ol/proj';
 import { LineString, MultiLineString, Point } from 'ol/geom';
-import { Style, Stroke, Fill } from 'ol/style';
+import { Style, Fill } from 'ol/style';
 import XYZ from 'ol/source/XYZ';
 
 import 'ol/ol.css';
