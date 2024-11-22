@@ -8,6 +8,54 @@ import { samplePlaylistData } from './samplePlaylisData';
 export default function Home() {
   const [gpxData, setGpxData] = useState<string | null>(null);
   const playlistData = samplePlaylistData;
+  const [activityStartTime, setActivityStartTime] = useState<Date | null>(null);
+  const [activityType, setActivityType] = useState<string | null>(null);
+
+  const parseGpx = (gpxContent: string): Document | null => {
+    try {
+      const parser = new DOMParser();
+      const gpxDoc = parser.parseFromString(gpxContent, 'application/xml');
+      const errorNode = gpxDoc.querySelector('parsererror');
+
+      if (errorNode) {
+        console.error('Error parsing GPX file:', errorNode.textContent);
+        return null;
+      }
+
+      return gpxDoc;
+    } catch (error) {
+      console.error('Error processing GPX file:', error);
+      return null;
+    }
+  };
+
+  const getStartTimeFromGpx = (gpxContent: string): Date | null => {
+    const gpxDoc = parseGpx(gpxContent);
+    if (!gpxDoc) return null;
+
+    const timeElement = gpxDoc.querySelector('trk > trkseg > trkpt > time');
+
+    if (timeElement?.textContent) {
+      return new Date(timeElement.textContent);
+    } else {
+      console.warn('No <time> element found in the GPX file.');
+      return null;
+    }
+  };
+
+  const getActivityTypeFromGpx = (gpxContent: string): string | null => {
+    const gpxDoc = parseGpx(gpxContent);
+    if (!gpxDoc) return null;
+
+    const typeElement = gpxDoc.querySelector('trk > type');
+
+    if (typeElement?.textContent) {
+      return typeElement.textContent;
+    } else {
+      console.warn('No <type> element found in the GPX file.');
+      return null;
+    }
+  };
 
   useEffect(() => {
     fetch('/run.gpx')
@@ -22,6 +70,8 @@ export default function Home() {
       .then((data) => {
         if (data !== gpxData) {
           setGpxData(data);
+          data && setActivityStartTime(getStartTimeFromGpx(data));
+          data && setActivityType(getActivityTypeFromGpx(data));
         }
       })
       .catch((error) => console.error('Error fetching GPX data:', error));
@@ -35,13 +85,21 @@ export default function Home() {
             MAKING TRACKS
           </h1>
         </div>
+        <div className="flex flex-row">
+          <Playlist playlistData={playlistData} />
+          {gpxData ? (
+            <div className="flex flex-column flex-1 w-full h-full">
+              <div>
+                <p>Activity start time: {activityStartTime?.toISOString()}</p>
+                <p>Activity type: {activityType}</p>
+              </div>
 
-        <Playlist playlistData={playlistData} />
-        {gpxData ? (
-          <ActivityMap gpxData={gpxData} />
-        ) : (
-          <p>Loading GPX Data...</p>
-        )}
+              <ActivityMap gpxData={gpxData} />
+            </div>
+          ) : (
+            <p>Loading GPX Data...</p>
+          )}
+        </div>
       </main>
     </div>
   );

@@ -45,7 +45,7 @@ const Playlist: React.FC<PlaylistProps> = ({ playlistData }) => {
   return (
     <div style={{ width: '50%', height: '500px' }}>
       <img src={playlistData.images[1].url} />
-      <div>
+      <div className="overflow-scroll">
         {playlistData.tracks.items.map((item) => (
           <div key={item.track.name}>{item.track.name}</div>
         ))}

@@ -128,7 +128,7 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData }) => {
       map.current!.forEachFeatureAtPixel(event.pixel, (feature) => {
         const geometry = feature.getGeometry();
         if (geometry instanceof Point) {
-          const timestamp = feature.get('time'); // Get the timestamp property
+          const timestamp = feature.get('time');
           if (timestamp) {
             console.log('Timestamp:', timestamp);
           } else {
@@ -142,7 +142,7 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData }) => {
     return () => map.current?.setTarget(undefined);
   }, [gpxData]);
 
-  return <div ref={mapRef} style={{ width: '45%', height: '500px' }} />;
+  return <div ref={mapRef} className="w-[400px] h-[400px]" />;
 };
 
 export default ActivityMap;
