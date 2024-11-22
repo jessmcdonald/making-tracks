@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-
 import Map from 'ol/Map';
 import View from 'ol/View';
 import { GPX } from 'ol/format';
@@ -25,7 +24,14 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData }) => {
   useEffect(() => {
     if (!mapRef.current || !gpxData) return;
 
-    // Define vector source with GPX format
+    const colorPalette = [
+      '#FB8CAB',
+      '#E65C9C',
+      '#AF1281',
+      '#6B0772',
+      '#360167',
+    ];
+
     const trackSource = new VectorSource();
     const pointSource = new VectorSource();
 
@@ -34,10 +40,35 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData }) => {
       featureProjection: 'EPSG:3857',
     });
 
-    // Manually parse the GPX file to extract timestamps
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(gpxData, 'application/xml');
-    const trackPoints = xmlDoc.getElementsByTagName('trkpt');
+    const trackPoints = Array.from(xmlDoc.getElementsByTagName('trkpt'));
+
+    // extract heart rate values
+    const heartRateValues: number[] = trackPoints.map((point) => {
+      const heartRateElement =
+        point.getElementsByTagName('ns3:hr')[0]?.textContent;
+      return heartRateElement ? parseInt(heartRateElement, 10) : 0;
+    });
+
+    // calculate min and max heart rate
+    const minHeartRate = Math.min(...heartRateValues);
+    const maxHeartRate = Math.max(...heartRateValues);
+
+    console.log({ minHeartRate, maxHeartRate, heartRateValues });
+
+    // map heart rate to color palette
+    const calculateHeartRateColor = (heartRate: number): string => {
+      const normalizedHeartRate =
+        maxHeartRate === minHeartRate
+          ? 0
+          : (heartRate - minHeartRate) / (maxHeartRate - minHeartRate);
+      const paletteIndex = Math.min(
+        Math.floor(normalizedHeartRate * (colorPalette.length - 1)),
+        colorPalette.length - 1
+      );
+      return colorPalette[paletteIndex];
+    };
 
     features.forEach((feature, featureIndex) => {
       const geometry = feature.getGeometry();
@@ -57,48 +88,41 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData }) => {
 
     function addPointsFromLineString(
       line: LineString,
-      trackPoints: HTMLCollectionOf<Element>,
+      trackPoints: Element[],
       lineIndex: number
     ) {
       const coordinates = line.getCoordinates();
+
       coordinates.forEach((coord, coordIndex) => {
         const point = new Feature({
           geometry: new Point(coord),
         });
 
-        // Extract timestamp from parsed GPX data
-        const timeElement =
-          trackPoints[lineIndex + coordIndex]?.getElementsByTagName('time')[0];
-        if (timeElement) {
-          point.set('time', timeElement.textContent); // Set the timestamp as a property
-        }
+        const heartRateElement =
+          trackPoints[lineIndex + coordIndex]?.getElementsByTagName(
+            'ns3:hr'
+          )[0];
+        const heartRate = heartRateElement
+          ? parseInt(heartRateElement.textContent!, 10)
+          : 0;
+
+        const heartRateColor = calculateHeartRateColor(heartRate);
+
+        point.setStyle(
+          new Style({
+            image: new CircleStyle({
+              radius: 4,
+              fill: new Fill({ color: heartRateColor }),
+            }),
+          })
+        );
 
         pointSource.addFeature(point);
       });
     }
 
-    const trackStyle = new Style({
-      stroke: new Stroke({
-        color: 'indigo',
-        width: 4,
-      }),
-    });
-
-    const pointStyle = new Style({
-      image: new CircleStyle({
-        radius: 3,
-        fill: new Fill({ color: 'indigo' }),
-      }),
-    });
-
-    const trackLayer = new VectorLayer({
-      source: trackSource,
-      style: trackStyle,
-    });
-
     const pointLayer = new VectorLayer({
       source: pointSource,
-      style: pointStyle,
     });
 
     const stamenLayer = new TileLayer({
@@ -109,7 +133,7 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData }) => {
 
     map.current = new Map({
       target: mapRef.current,
-      layers: [stamenLayer, trackLayer, pointLayer],
+      layers: [stamenLayer, pointLayer],
       view: new View({
         center: fromLonLat([0, 0]),
         zoom: 10,

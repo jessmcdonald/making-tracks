@@ -87,7 +87,7 @@ export default function Home() {
             {'// MAKING TRACKS'}
           </h1>
         </div>
-        <div className="flex flex-row flex-1 overflow-hidden">
+        <div className="flex flex-row flex-1 overflow-hidden gap-">
           <Playlist playlistData={playlistData} />
           {gpxData ? (
             <div className="flex flex-column flex-wrap flex-1 w-full h-full">
