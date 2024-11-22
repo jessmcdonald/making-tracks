@@ -61,7 +61,7 @@ const convertMilliseconds = (ms: number) => {
 
 const Playlist: React.FC<PlaylistProps> = ({ playlistData }) => {
   return (
-    <div className="flex flex-col gap-5 h-full">
+    <div className="flex flex-col gap-5 h-full w-[45%]">
       <img className="rounded-md h-64 w-64" src={playlistData.images[1].url} />
       <p className="text-xl font-bold">
         {playlistData.name} // {playlistData.owner.display_name}
@@ -70,20 +70,23 @@ const Playlist: React.FC<PlaylistProps> = ({ playlistData }) => {
         {playlistData.tracks.items.map((item) => (
           <div
             key={item.track.name}
-            className="bg-[#222222] rounded-md p-2 flex flex-row gap-2 items-center"
+            className="bg-[#222222] rounded-md p-2 flex items-center"
           >
             <img
               src={item.track.album.images[1].url}
               className="rounded-sm h-8 w-8"
             />
-            <div className="flex flex-1 justify-between items-center">
-              <div className="flex flex-col">
+            <div className="flex flex-1 items-center pl-2">
+              <div className="flex flex-col flex-[2]">
                 <p className="text-sm font-semibold">{item.track.name}</p>
                 <p className="text-xs">
                   {item.track.artists.map((artist) => artist.name).join(', ')}
                 </p>
               </div>
-              <p className="text-xs">
+              <p className="text-xs flex-1 text-right truncate">
+                {item.track.album.name}
+              </p>
+              <p className="text-xs flex-shrink-0 pl-4">
                 {convertMilliseconds(item.track.duration_ms)}
               </p>
             </div>
