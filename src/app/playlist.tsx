@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export type SpotifyImage = {
   url: string;
@@ -47,6 +47,7 @@ export type SpotifyPlaylist = {
 
 interface PlaylistProps {
   playlistData: SpotifyPlaylist;
+  highlightedTrackIndex: number | null;
 }
 
 const convertMilliseconds = (ms: number) => {
@@ -59,7 +60,24 @@ const convertMilliseconds = (ms: number) => {
   return `${minutes}:${paddedSeconds}`;
 };
 
-const Playlist: React.FC<PlaylistProps> = ({ playlistData }) => {
+const Playlist: React.FC<PlaylistProps> = ({
+  playlistData,
+  highlightedTrackIndex,
+}) => {
+  const trackRefs = useRef<HTMLDivElement[]>([]);
+
+  useEffect(() => {
+    if (
+      highlightedTrackIndex !== null &&
+      trackRefs.current[highlightedTrackIndex]
+    ) {
+      trackRefs.current[highlightedTrackIndex].scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [highlightedTrackIndex]);
+
   return (
     <div className="flex flex-col gap-5 h-full w-[45%]">
       <img className="rounded-md h-64 w-64" src={playlistData.images[1].url} />
@@ -67,10 +85,15 @@ const Playlist: React.FC<PlaylistProps> = ({ playlistData }) => {
         {`${playlistData.name} // ${playlistData.owner.display_name}`}
       </p>
       <div className="overflow-auto scrollbar-thin scrollbar-thumb-[#222222] scrollbar-track-[#636363] flex flex-col gap-2 flex-grow pr-2">
-        {playlistData.tracks.items.map((item) => (
+        {playlistData.tracks.items.map((item, index) => (
           <div
             key={item.track.name}
-            className="bg-[#222222] rounded-md p-2 flex items-center"
+            ref={(el) => {
+              trackRefs.current[index] = el!;
+            }}
+            className={`rounded-md p-2 flex items-center ${
+              index === highlightedTrackIndex ? 'bg-green-500' : 'bg-[#222222]'
+            }`}
           >
             <img
               src={item.track.album.images[1].url}

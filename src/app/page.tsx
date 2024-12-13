@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import ActivityMap from './activity-map';
-import Playlist, { SpotifyPlaylist, SpotifyTrack } from './playlist';
+import Playlist, { SpotifyTrack } from './playlist';
 import { samplePlaylistData } from './samplePlaylisData';
 
 export default function Home() {
@@ -10,6 +10,9 @@ export default function Home() {
   const playlistData = samplePlaylistData;
   const [activityStartTime, setActivityStartTime] = useState<Date | null>(null);
   const [activityType, setActivityType] = useState<string | null>(null);
+  const [highlightedTrackIndex, setHighlightedTrackIndex] = useState<
+    number | null
+  >(null);
 
   const parseGpx = (gpxContent: string): Document | null => {
     try {
@@ -65,34 +68,29 @@ export default function Home() {
     const playlist = playlistData;
     const startTime = activityStartTime ? activityStartTime : 0;
 
-    // Parse the start time and timestamp into Date objects
     const start = new Date(startTime).getTime();
     const target = new Date(timestamp).getTime();
 
-    // Calculate the elapsed time in milliseconds
     const elapsedTime = target - start;
 
     if (elapsedTime < 0) {
-      // Timestamp is before the start time
       return null;
     }
 
     let accumulatedTime = 0;
 
-    // Iterate through the tracks in order
-    for (const trackItem of playlist.tracks.items) {
-      const track = trackItem.track;
+    for (let index = 0; index < playlist.tracks.items.length; index++) {
+      const track = playlist.tracks.items[index].track;
 
-      // Add the current track's duration to the accumulated time
       accumulatedTime += track.duration_ms;
 
       if (elapsedTime < accumulatedTime) {
-        // If the elapsed time falls within the duration of the current track, return it
+        setHighlightedTrackIndex(index);
+        console.log(index);
         return track;
       }
     }
 
-    // If the timestamp is after the last track finishes, return null
     return null;
   }
 
@@ -127,7 +125,10 @@ export default function Home() {
           </h1>
         </div>
         <div className="flex flex-row flex-1 overflow-hidden gap-">
-          <Playlist playlistData={playlistData} />
+          <Playlist
+            playlistData={playlistData}
+            highlightedTrackIndex={highlightedTrackIndex}
+          />
           {gpxData ? (
             <div className="flex flex-column flex-wrap flex-1 w-full h-full">
               <div className="w-full">
