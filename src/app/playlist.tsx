@@ -1,12 +1,12 @@
 import React from 'react';
 
-type SpotifyImage = {
+export type SpotifyImage = {
   url: string;
   height: number;
   width: number;
 };
 
-type SpotifyArtist = {
+export type SpotifyArtist = {
   external_urls: {
     spotify: string;
   };
@@ -16,7 +16,7 @@ type SpotifyArtist = {
   uri: string;
 };
 
-type SpotifyTrack = {
+export type SpotifyTrack = {
   preview_url: string;
   artists: SpotifyArtist[];
   album: {
@@ -33,7 +33,7 @@ type SpotifyTrack = {
   duration_ms: number;
 };
 
-type SpotifyPlaylist = {
+export type SpotifyPlaylist = {
   images: SpotifyImage[];
   name: string;
   owner: {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import ActivityMap from './activity-map';
-import Playlist from './playlist';
+import Playlist, { SpotifyPlaylist, SpotifyTrack } from './playlist';
 import { samplePlaylistData } from './samplePlaylisData';
 
 export default function Home() {
@@ -57,6 +57,45 @@ export default function Home() {
     }
   };
 
+  function getTrackAtTimestamp(
+    // playlist: SpotifyPlaylist,
+    // startTime: string,
+    timestamp: string
+  ): SpotifyTrack | null {
+    const playlist = playlistData;
+    const startTime = activityStartTime ? activityStartTime : 0;
+
+    // Parse the start time and timestamp into Date objects
+    const start = new Date(startTime).getTime();
+    const target = new Date(timestamp).getTime();
+
+    // Calculate the elapsed time in milliseconds
+    const elapsedTime = target - start;
+
+    if (elapsedTime < 0) {
+      // Timestamp is before the start time
+      return null;
+    }
+
+    let accumulatedTime = 0;
+
+    // Iterate through the tracks in order
+    for (const trackItem of playlist.tracks.items) {
+      const track = trackItem.track;
+
+      // Add the current track's duration to the accumulated time
+      accumulatedTime += track.duration_ms;
+
+      if (elapsedTime < accumulatedTime) {
+        // If the elapsed time falls within the duration of the current track, return it
+        return track;
+      }
+    }
+
+    // If the timestamp is after the last track finishes, return null
+    return null;
+  }
+
   useEffect(() => {
     fetch('/run.gpx')
       .then((response) => {
@@ -95,7 +134,10 @@ export default function Home() {
                 <p>Activity start time: {activityStartTime?.toISOString()}</p>
                 <p>Activity type: {activityType}</p>
               </div>
-              <ActivityMap gpxData={gpxData} />
+              <ActivityMap
+                gpxData={gpxData}
+                onPointClick={getTrackAtTimestamp}
+              />
             </div>
           ) : (
             <p>Loading GPX Data...</p>
