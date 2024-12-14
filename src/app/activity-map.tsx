@@ -200,11 +200,10 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData, onPointClick }) => {
           })
         );
 
-        // Extract timestamp from parsed GPX data
         const timeElement =
           trackPoints[lineIndex + coordIndex]?.getElementsByTagName('time')[0];
         if (timeElement) {
-          point.set('time', timeElement.textContent); // Set the timestamp as a property
+          point.set('time', timeElement.textContent);
         }
 
         pointSource.addFeature(point);

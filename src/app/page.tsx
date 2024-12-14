@@ -94,27 +94,22 @@ export default function Home() {
     return null;
   }
 
-  useEffect(() => {
-    fetch('/run.gpx')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(
-            `Network response was not ok: ${response.statusText}`
-          );
-        }
-        return response.text();
-      })
-      .then((data) => {
-        if (data !== gpxData) {
-          setGpxData(data);
-          if (data) {
-            setActivityStartTime(getStartTimeFromGpx(data));
-            setActivityType(getActivityTypeFromGpx(data));
-          }
-        }
-      })
-      .catch((error) => console.error('Error fetching GPX data:', error));
-  }, [gpxData]);
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target?.result as string;
+        setGpxData(content);
+        setActivityStartTime(getStartTimeFromGpx(content));
+        setActivityType(getActivityTypeFromGpx(content));
+      };
+      reader.onerror = () => {
+        console.error('Error reading the file');
+      };
+      reader.readAsText(file);
+    }
+  };
 
   return (
     <div className="font-[family-name:var(--font-geist-sans)] h-screen overflow-hidden">
@@ -124,13 +119,14 @@ export default function Home() {
             {'// MAKING TRACKS'}
           </h1>
         </div>
-        <div className="flex flex-row flex-1 overflow-hidden gap-">
+
+        <div className="flex flex-row flex-1 overflow-hidden gap-4">
           <Playlist
             playlistData={playlistData}
             highlightedTrackIndex={highlightedTrackIndex}
           />
           {gpxData ? (
-            <div className="flex flex-column flex-wrap flex-1 w-full h-full">
+            <div className="flex flex-wrap flex-1 w-full h-full">
               <div className="w-full">
                 <p>Activity start time: {activityStartTime?.toISOString()}</p>
                 <p>Activity type: {activityType}</p>
@@ -141,7 +137,15 @@ export default function Home() {
               />
             </div>
           ) : (
-            <p>Loading GPX Data...</p>
+            <div className="flex flex-col flex-wrap flex-1 w-full">
+              <input
+                type="file"
+                accept=".gpx"
+                onChange={handleFileUpload}
+                className="border border-gray-300 p-2 rounded-md"
+              />
+              <p>pls upload a GPX file</p>
+            </div>
           )}
         </div>
       </main>
