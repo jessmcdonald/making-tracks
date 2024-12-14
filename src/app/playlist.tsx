@@ -73,7 +73,8 @@ const Playlist: React.FC<PlaylistProps> = ({
     ) {
       trackRefs.current[highlightedTrackIndex].scrollIntoView({
         behavior: 'smooth',
-        block: 'center',
+        block: 'nearest',
+        inline: 'start',
       });
     }
   }, [highlightedTrackIndex]);

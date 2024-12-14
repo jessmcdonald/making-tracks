@@ -15,11 +15,7 @@ import CircleStyle from 'ol/style/Circle';
 
 interface MapProps {
   gpxData: string | null;
-  onPointClick: (
-    // playlist: SpotifyPlaylist,
-    // startTime: string,
-    timestamp: string
-  ) => void;
+  onPointClick: (timestamp: string) => void;
 }
 
 const ActivityMap: React.FC<MapProps> = ({ gpxData, onPointClick }) => {
