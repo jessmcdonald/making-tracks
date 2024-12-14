@@ -12,7 +12,6 @@ import XYZ from 'ol/source/XYZ';
 import 'ol/ol.css';
 import { Feature } from 'ol';
 import CircleStyle from 'ol/style/Circle';
-import { SpotifyPlaylist } from './playlist';
 
 interface MapProps {
   gpxData: string | null;
@@ -27,9 +26,9 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData, onPointClick }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const map = useRef<Map | null>(null);
 
-  const [mapColorSetting, setMapColorSetting] = useState<'heart-rate' | 'pace'>(
-    'heart-rate'
-  );
+  // const [mapColorSetting, setMapColorSetting] = useState<'heart-rate' | 'pace'>(
+  //   'heart-rate'
+  // );
 
   useEffect(() => {
     if (!mapRef.current || !gpxData) return;
@@ -256,7 +255,7 @@ const ActivityMap: React.FC<MapProps> = ({ gpxData, onPointClick }) => {
     });
 
     return () => map.current?.setTarget(undefined);
-  }, [gpxData, mapColorSetting]);
+  }, [gpxData]);
 
   return (
     <div className="w-full h-full">

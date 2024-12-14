@@ -92,7 +92,7 @@ const Playlist: React.FC<PlaylistProps> = ({
               trackRefs.current[index] = el!;
             }}
             className={`rounded-md p-2 flex items-center ${
-              index === highlightedTrackIndex ? 'bg-green-500' : 'bg-[#222222]'
+              index === highlightedTrackIndex ? 'bg-indigo-600' : 'bg-[#222222]'
             }`}
           >
             <img
