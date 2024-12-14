@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ActivityMap from './activity-map';
 import Playlist, { SpotifyTrack } from './playlist';
 import { samplePlaylistData } from './samplePlaylisData';
